@@ -50,14 +50,8 @@
         const tg = window.Telegram.WebApp;
         tg.expand(); // Разворачивает Web App
 
-        // Получение данных из URL-параметров
-        function getQueryParam(param) {
-            const urlParams = new URLSearchParams(window.location.search);
-            return urlParams.get(param);
-        }
-
-        // Данные из URL (переданы ботом)
-        const bracketData = JSON.parse(getQueryParam("data")) || [];
+        // URL файла с данными турнира
+        const tournamentDataUrl = "./tournament.json"; // Укажите путь к вашему JSON-файлу на сервере
 
         // Функция для отображения турнирной таблицы
         function renderBracket(bracket) {
@@ -84,8 +78,21 @@
             });
         }
 
-        // Отображение данных
-        renderBracket(bracketData);
+        // Загрузка данных турнира с сервера
+        fetch(tournamentDataUrl)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Не удалось загрузить данные турнира.");
+                }
+                return response.json();
+            })
+            .then(data => {
+                renderBracket(data); // Отображение данных
+            })
+            .catch(error => {
+                document.getElementById("title").textContent = "Ошибка загрузки турнира.";
+                console.error(error);
+            });
     </script>
 </body>
 </html>
