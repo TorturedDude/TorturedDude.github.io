@@ -53,30 +53,38 @@
         // URL файла с данными турнира
         const tournamentDataUrl = "./tournament.json"; // Укажите путь к вашему JSON-файлу на сервере
 
-        // Функция для отображения турнирной таблицы
         function renderBracket(bracket) {
-            const bracketContainer = document.getElementById("bracket");
-            bracketContainer.innerHTML = ""; // Очищаем контейнер
-            if (!bracket || bracket.length === 0) {
-                document.getElementById("title").textContent = "Турнирная сетка еще не создана.";
-                return;
-            }
-            document.getElementById("title").textContent = "Турнирная таблица";
-            bracket.forEach((round, roundIndex) => {
-                const roundDiv = document.createElement("div");
-                roundDiv.classList.add("round");
-                round.forEach(match => {
-                    const matchDiv = document.createElement("div");
-                    matchDiv.classList.add("match");
-                    matchDiv.innerHTML = `
-                        <span class="${match.winner ? 'winner' : 'loser'}">${match.meme1}</span>
-                        <span class="${!match.winner ? 'winner' : 'loser'}">${match.meme2}</span>
-                    `;
-                    roundDiv.appendChild(matchDiv);
-                });
-                bracketContainer.appendChild(roundDiv);
-            });
-        }
+    const bracketContainer = document.getElementById("bracket");
+    bracketContainer.innerHTML = ""; // Очищаем контейнер
+
+    if (!bracket || bracket.length === 0) {
+        document.getElementById("title").textContent = "Турнирная сетка еще не создана.";
+        return;
+    }
+
+    document.getElementById("title").textContent = "Турнирная таблица";
+
+    bracket.forEach((round, roundIndex) => {
+        const roundDiv = document.createElement("div");
+        roundDiv.classList.add("round");
+
+        round.forEach(match => {
+            const matchDiv = document.createElement("div");
+            matchDiv.classList.add("match");
+
+            const meme1Class = match.winner === match.meme1 ? 'winner' : 'loser';
+            const meme2Class = match.winner === match.meme2 ? 'winner' : 'loser';
+
+            matchDiv.innerHTML = `
+                <span class="${meme1Class}">${match.meme1}</span>
+                <span class="${meme2Class}">${match.meme2}</span>
+            `;
+            roundDiv.appendChild(matchDiv);
+        });
+
+        bracketContainer.appendChild(roundDiv);
+    });
+}
 
         // Загрузка данных турнира с сервера
         fetch(tournamentDataUrl)
