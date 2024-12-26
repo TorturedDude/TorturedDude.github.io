@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <title>Турнирная таблица</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #333;
+            color: #fff;
+            padding: 20px;
+            text-align: center;
+        }
+        .bracket {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+        .round {
+            display: flex;
+            flex-direction: column;
+            margin: 0 20px;
+        }
+        .match {
+            margin: 10px 0;
+            padding: 10px;
+            background-color: #444;
+            border: 1px solid #555;
+            border-radius: 5px;
+        }
+        .match span {
+            display: block;
+        }
+        .winner {
+            font-weight: bold;
+            color: #4caf50;
+        }
+        .loser {
+            color: #f44336;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="title">Загрузка турнирной таблицы...</h1>
+    <div id="bracket" class="bracket"></div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand(); // Разворачивает Web App
+
+        // Получение данных из URL-параметров
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        // Данные из URL (переданы ботом)
+        const bracketData = JSON.parse(getQueryParam("data")) || [];
+
+        // Функция для отображения турнирной таблицы
+        function renderBracket(bracket) {
+            const bracketContainer = document.getElementById("bracket");
+            bracketContainer.innerHTML = ""; // Очищаем контейнер
+            if (!bracket || bracket.length === 0) {
+                document.getElementById("title").textContent = "Турнирная сетка еще не создана.";
+                return;
+            }
+            document.getElementById("title").textContent = "Турнирная таблица";
+            bracket.forEach((round, roundIndex) => {
+                const roundDiv = document.createElement("div");
+                roundDiv.classList.add("round");
+                round.forEach(match => {
+                    const matchDiv = document.createElement("div");
+                    matchDiv.classList.add("match");
+                    matchDiv.innerHTML = `
+                        <span class="${match.winner ? 'winner' : 'loser'}">${match.meme1}</span>
+                        <span class="${!match.winner ? 'winner' : 'loser'}">${match.meme2}</span>
+                    `;
+                    roundDiv.appendChild(matchDiv);
+                });
+                bracketContainer.appendChild(roundDiv);
+            });
+        }
+
+        // Отображение данных
+        renderBracket(bracketData);
+    </script>
+</body>
+</html>
